@@ -1,11 +1,11 @@
 const prisma = require('./../../utils/prismaClient/prismaClient');
+const { validateRegister, validateLogin } = require('./../../validator/validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 
-const { validateRegister, validateLogin } = require('./../../validator/validator');
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => { 
     try {

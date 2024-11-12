@@ -21,9 +21,19 @@ const validateLogin = () => {
 };
 
 
+const validateUpdate = () => {
+    return joi.object({
+        firstName: joi.string(),
+        lastName: joi.string(),
+        dateOfBirth: joi.date(),
+        email: joi.string().email(),
+        phoneNumber: joi.string(),
+        password: joi.string()
+    });
+};
 
 
 
 
 
-module.exports = { validateRegister, validateLogin };
+module.exports = { validateRegister, validateLogin , validateUpdate };

@@ -1,9 +1,18 @@
 const prisma = require('./../../utils/prismaClient/prismaClient');
 
+const { validateRegister, validateUpdate } = require('./../../validator/validator');
+
+
 
 
 const getAllUsers = async (req, res) => {    
     try {
+
+
+if (req.user.id !== req.params.id) {
+    res.status(403).json({message : "yu are not allowed , you can only see your profile "})
+    
+}
         const users = await prisma.user.findMany();
         res.json(users);
     } catch (error) {
@@ -15,6 +24,11 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
+
+        if (req.user.id !== req.params.id) {
+            res.status(403).json({message : "yu are not allowed , you can only see your profile "})
+            
+        }
         const { id } = req.params;
         const user = await prisma.user.findUnique({
             where: {
@@ -30,7 +44,17 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        const { firstName, lastName , dateOfBirth,email ,phoneNumber , password } = req.body;
+
+        if (req.user.id !== req.params.id) {
+            res.status(403).json({message : "yu are not allowed , you can only see your profile "})
+            
+        }
+
+        const createSchema = validateRegister();
+        const { error } = createSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
         const user = await prisma.user.create({
             data: {
                 firstName,
@@ -47,12 +71,21 @@ const createUser = async (req, res) => {
         res.json(error);
     }
 }
-
+//updateUser
 
 const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { firstName, lastName , dateOfBirth,email ,phoneNumber , password } = req.body;
+
+        if (req.user.id !== req.params.id) {
+            res.status(403).json({message : "yu are not allowed , you can only update your profile "})
+            
+        }
+        const updateSchema = validateUpdate();
+        const { error } = updateSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+
         const user = await prisma.user.update({
             where: {
                 id: parseInt(id)
@@ -76,7 +109,7 @@ const updateUser = async (req, res) => {
 
 
 
-//
+//deleteUser 
 
 const deleteUser = async (req, res) => {
 try {
