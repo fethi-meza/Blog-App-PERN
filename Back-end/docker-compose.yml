@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15.3
+    container_name: BLOGE-APP
+    restart: always
+    ports:
+      - "9595:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: BLOGE-APP
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  api-bolge:
+    container_name: api-BLOGE-APP
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 4001:4001
+    env_file:
+      - .env 
+volumes:
+  postgres-data:
+ 
